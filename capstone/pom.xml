@@ -4,6 +4,10 @@
 	<groupId>com.techelevator</groupId>
 	<artifactId>m1-java-capstone-vending-machine</artifactId>
 	<version>1.0</version>
+	<properties>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
+	</properties>
 	<packaging>jar</packaging>
 	<dependencies>
 		<dependency>
