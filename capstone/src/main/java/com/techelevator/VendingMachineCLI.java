@@ -2,6 +2,7 @@ package com.techelevator;
 
 import com.techelevator.view.Menu;
 
+import java.awt.geom.Arc2D;
 import java.util.*;
 
 import static java.lang.System.exit;
@@ -88,6 +89,7 @@ public class VendingMachineCLI {
                             }
                         System.out.println(" ");
                         Map<String, Double> itemPrices = AttributeFinder.getItemPrices();
+                        Map<String, String> itemSounds = AttributeFinder.getItemSounds();
                         int itemQuantity = InventoryInterface.getQuantity(itemSelected);
                         double currentMoney = purchaseWorkFlow.getCurrentMoney();
                         if (itemQuantity > 0 ) {
@@ -97,6 +99,7 @@ public class VendingMachineCLI {
                                 System.out.println("Cost: " + itemPrices.get(itemSelected));
                                 purchaseWorkFlow.purchase(itemPrices.get(itemSelected));
                                 System.out.println("Money Remaining: " + purchaseWorkFlow.getCurrentMoney());
+                                System.out.println(itemSounds.get(itemSelected));
                             } else {
                                 System.out.println("Insufficient funds.");
                             }
@@ -107,7 +110,42 @@ public class VendingMachineCLI {
 
 
 
+
+
                     } else if (choice.equals(PURCHASE_MENU_OPTION_FINISH_TRANSACTION)) {
+                        double moneyToReturn = purchaseWorkFlow.getCurrentMoney();
+
+                        int numberOfCents = (int) (moneyToReturn * 100);
+
+                        int nickel = 5 ;
+                        int dime = 10;
+                        int quarter = 25;
+                        int nickelQty = 0;
+                        int dimeQty = 0;
+                        int quarterQty = 0;
+
+                        while(numberOfCents >= quarter){
+                            quarterQty += 1;
+                            numberOfCents -= quarter;
+                        }
+                        while(numberOfCents >= dime){
+                            dimeQty += 1;
+                            numberOfCents -= dime;
+                        }
+                        while (numberOfCents >= nickel){
+                            nickelQty += 1;
+                            numberOfCents -= nickel;
+                        }
+                        moneyToReturn = (double)numberOfCents  / 100;
+                        purchaseWorkFlow.setCurrentMoney(moneyToReturn);
+                        System.out.println("Change Returned");
+                        System.out.println("Quarters Returned: " + quarterQty);
+                        System.out.println("Dimes Returned: "+ dimeQty);
+                        System.out.println("Nickels Returned: "+ nickelQty);
+
+
+
+
                     }
                 }
 

@@ -12,6 +12,7 @@ public class AttributeFinder implements ItemFinder {
     private String sound;
     private static Map<String, String> itemLocationMap = new TreeMap<>();
     private static Map<String, Double> itemPrices = new HashMap<>();
+    private static Map<String, String> itemSounds = new HashMap<>();
 
     public AttributeFinder(String location, List<String[]> list) {
         String[] strings = ItemFinder.findItem(location, list);
@@ -33,6 +34,7 @@ public class AttributeFinder implements ItemFinder {
         sound = getSound(type);
         itemLocationMap.put(location, name);
         itemPrices.put(name, price);
+        itemSounds.put(name, sound);
 
     }
 
@@ -42,6 +44,10 @@ public class AttributeFinder implements ItemFinder {
 
     public static Map<String, Double> getItemPrices() {
         return itemPrices;
+    }
+
+    public static Map<String, String> getItemSounds() {
+        return itemSounds;
     }
 
     private String getSound(String type) {

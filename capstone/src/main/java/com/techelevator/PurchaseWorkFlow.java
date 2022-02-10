@@ -12,7 +12,7 @@ public class PurchaseWorkFlow  {
 
 
     protected double moneyFed;
-    protected double currentMoney;
+    private double currentMoney;
     protected double totalCost;
 
     public PurchaseWorkFlow() {
@@ -45,6 +45,9 @@ public class PurchaseWorkFlow  {
 
     public double getCurrentMoney() {
         return currentMoney;
+    }
+    public void setCurrentMoney(double moneys){
+        currentMoney = moneys;
     }
 
 }
