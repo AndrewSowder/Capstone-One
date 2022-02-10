@@ -13,6 +13,15 @@ public interface InventoryInterface {
         itemNameAndQuantity.put(name, MAX_QUANTITY);
     }
 
+    static void dispenseItem(String name, int quantity) {
+        int currentQuantity = itemNameAndQuantity.get(name);
+        itemNameAndQuantity.put(name, currentQuantity-quantity);
+    }
+
+    static int getQuantity(String name) {
+        return itemNameAndQuantity.get(name);
+    }
+
     default Map<String, Integer> getMap() {
         return itemNameAndQuantity;
     }

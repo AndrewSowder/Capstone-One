@@ -2,10 +2,10 @@ package com.techelevator;
 
 import com.techelevator.view.Menu;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.lang.System.exit;
+import static java.lang.System.setOut;
 
 public class VendingMachineCLI {
 
@@ -28,6 +28,9 @@ public class VendingMachineCLI {
 
 
         while (true) {
+            PurchaseWorkFlow purchaseWorkFlow = new PurchaseWorkFlow();
+            AttributeFinder attributeFinder = new AttributeFinder();
+            Scanner scanner = new Scanner(System.in);
             String choice = (String) menu.getChoiceFromOptions(MAIN_MENU_OPTIONS);
 
             if (choice.equals(MAIN_MENU_OPTION_DISPLAY_ITEMS)) {
@@ -42,17 +45,71 @@ public class VendingMachineCLI {
                 }
 
             } else if (choice.equals(MAIN_MENU_OPTION_PURCHASE)) {
+                while (!choice.equals(PURCHASE_MENU_OPTION_FINISH_TRANSACTION)) {
                 choice = (String) menu.getChoiceFromOptions(PURCHASE_MENU_OPTIONS);
 
-                if (choice.equals(PURCHASE_MENU_OPTION_FEED_MONEY)) {
-                    //
+                    if (choice.equals(PURCHASE_MENU_OPTION_FEED_MONEY)) {
+                        //
+                        System.out.print("Enter dollar amount to insert >>> ");
 
-                } else if (choice.equals(PURCHASE_MENU_OPTION_SELECT_PRODUCT)) {
-                    //
+                        String moneyInputStr = scanner.nextLine();
+                        int moneyInput = 0;
+                        boolean loopDone = false;
+                        while (!loopDone) {
+                            try {
+                                moneyInput = Integer.parseInt(moneyInputStr);
+                                loopDone = true;
+                            } catch (Exception e) {
+                                System.out.print("Please enter valid dollar amount >>> ");
+                                moneyInputStr = scanner.nextLine();
+                            }
+                        }
+                        purchaseWorkFlow.feedMoney(moneyInput);
+                        System.out.println(" ");
+                        System.out.println("Current Money Provided: " + purchaseWorkFlow.getCurrentMoney());
+                    } else if (choice.equals(PURCHASE_MENU_OPTION_SELECT_PRODUCT)) {
+                        Map<String, String> itemLocation = AttributeFinder.getItemLocationMap();
+                        for (Map.Entry<String, String> item : itemLocation.entrySet()) {
+                            System.out.println(item.getKey() + " - " + item.getValue());
+                        }
+                        // get location input, ensure it's validity
+                        System.out.println(" ");
+                        System.out.print("Enter location >>> ");
+                        String userLocationInput = scanner.nextLine();
+                        String itemSelected = "";
+                            for (Map.Entry<String, String> item : itemLocation.entrySet()) {
+                                if (userLocationInput.contains(item.getKey())) {
+                                    itemSelected += item.getValue();
+                                }
+                            }
+                            if (itemSelected.equals("")) {
+                                System.out.println("Selected location not available.");
+                                break;
+                            }
+                        System.out.println(" ");
+                        Map<String, Double> itemPrices = AttributeFinder.getItemPrices();
+                        int itemQuantity = InventoryInterface.getQuantity(itemSelected);
+                        double currentMoney = purchaseWorkFlow.getCurrentMoney();
+                        if (itemQuantity > 0 ) {
+                            if (currentMoney >= itemPrices.get(itemSelected)) {
+                                // dispense
+                                System.out.println(itemSelected + " dispensed. ");
+                                System.out.println("Cost: " + itemPrices.get(itemSelected));
+                                purchaseWorkFlow.purchase(itemPrices.get(itemSelected));
+                                System.out.println("Money Remaining: " + purchaseWorkFlow.getCurrentMoney());
+                            } else {
+                                System.out.println("Insufficient funds.");
+                            }
+                        } else {
+                            System.out.println("Selected item is sold out.");
+                            break;
+                        }
 
-                } else if (choice.equals(PURCHASE_MENU_OPTION_FINISH_TRANSACTION)) {
+
+
+                    } else if (choice.equals(PURCHASE_MENU_OPTION_FINISH_TRANSACTION)) {
+                    }
                 }
-
 
             } else if (choice.equals(MAIN_MENU_OPTION_EXIT)) {
                 exit(0);

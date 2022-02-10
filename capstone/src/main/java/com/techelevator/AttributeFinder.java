@@ -1,5 +1,8 @@
 package com.techelevator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class AttributeFinder implements ItemFinder {
     private String name;
@@ -7,6 +10,8 @@ public class AttributeFinder implements ItemFinder {
     private String location;
     private String type;
     private String sound;
+    private static Map<String, String> itemLocationMap = new TreeMap<>();
+    private static Map<String, Double> itemPrices = new HashMap<>();
 
     public AttributeFinder(String location, List<String[]> list) {
         String[] strings = ItemFinder.findItem(location, list);
@@ -17,13 +22,26 @@ public class AttributeFinder implements ItemFinder {
         sound = getSound(type);
     }
 
+    public AttributeFinder() {
+    }
+
     public AttributeFinder(String[] strings) {
         location = strings[0];
         name = strings[1];
         price = Double.parseDouble(strings[2]);
         type = strings[3];
         sound = getSound(type);
+        itemLocationMap.put(location, name);
+        itemPrices.put(name, price);
 
+    }
+
+    public static Map<String, String> getItemLocationMap() {
+        return itemLocationMap;
+    }
+
+    public static Map<String, Double> getItemPrices() {
+        return itemPrices;
     }
 
     private String getSound(String type) {
