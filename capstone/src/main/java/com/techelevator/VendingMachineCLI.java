@@ -19,13 +19,9 @@ public class VendingMachineCLI {
     private static final String[] MAIN_MENU_OPTIONS = {MAIN_MENU_OPTION_DISPLAY_ITEMS, MAIN_MENU_OPTION_PURCHASE, MAIN_MENU_OPTION_EXIT};
 
     private Menu menu;
-    private PurchaseMenu purchaseMenu;
 
     public VendingMachineCLI(Menu menu) {
         this.menu = menu;
-    }
-    public void PurchaseMenuCLI(PurchaseMenu menu) {
-        this.purchaseMenu = menu;
     }
 
     public void run() {
@@ -67,7 +63,7 @@ public class VendingMachineCLI {
 
     public static void main(String[] args) {
         FileSplitter fileSplitter = new FileSplitter();
-        fileSplitter.splitFile("vendingmachine.csv");
+        fileSplitter.splitFile("C:\\Users\\Student\\workspace\\capstone-1-team-6\\capstone\\vendingmachine.csv");
 
         PurchaseMenu purchaseMenu = new PurchaseMenu(System.in, System.out);
 
