@@ -26,148 +26,152 @@ public class VendingMachineCLI {
         this.menu = menu;
     }
 
-    public void run() throws FileNotFoundException {
-        Logger logger = new Logger();
+    public void run() {
+        FileSplitter fileSplitter = new FileSplitter();
+        fileSplitter.splitFile();
+        List<Item> itemList = fileSplitter.getItemList();
+        try {
+            while (true) {
+                PurchaseWorkFlow purchaseWorkFlow = new PurchaseWorkFlow();
+                Logger logger = new Logger();
+                Scanner scanner = new Scanner(System.in);
+                String choice = (String) menu.getChoiceFromOptions(MAIN_MENU_OPTIONS);
 
+                if (choice.equals(MAIN_MENU_OPTION_DISPLAY_ITEMS)) {
 
-        while (true) {
-            PurchaseWorkFlow purchaseWorkFlow = new PurchaseWorkFlow();
-            AttributeFinder attributeFinder = new AttributeFinder();
-            Scanner scanner = new Scanner(System.in);
-            String choice = (String) menu.getChoiceFromOptions(MAIN_MENU_OPTIONS);
+                    for (Item item : itemList) {
+                        System.out.println(item.getName() + " - " + item.getQuantity());
+                    }
 
-            if (choice.equals(MAIN_MENU_OPTION_DISPLAY_ITEMS)) {
+                } else if (choice.equals(MAIN_MENU_OPTION_PURCHASE)) {
+                    while (!choice.equals(PURCHASE_MENU_OPTION_FINISH_TRANSACTION)) {
+                        choice = (String) menu.getChoiceFromOptions(PURCHASE_MENU_OPTIONS);
 
-                // display vending machine items
+                        if (choice.equals(PURCHASE_MENU_OPTION_FEED_MONEY)) {
+                            //
+                            System.out.print("Enter dollar amount to insert >>> ");
 
-
-                FileSplitter fileSplitter = new FileSplitter();
-                Map<String, Integer> itemQuantities = fileSplitter.getMap();
-                for (Map.Entry<String, Integer> item : itemQuantities.entrySet()) {
-                    System.out.println(item.getKey() + " - " + item.getValue());
-                }
-
-            } else if (choice.equals(MAIN_MENU_OPTION_PURCHASE)) {
-                while (!choice.equals(PURCHASE_MENU_OPTION_FINISH_TRANSACTION)) {
-                choice = (String) menu.getChoiceFromOptions(PURCHASE_MENU_OPTIONS);
-
-                    if (choice.equals(PURCHASE_MENU_OPTION_FEED_MONEY)) {
-                        //
-                        System.out.print("Enter dollar amount to insert >>> ");
-
-                        String moneyInputStr = scanner.nextLine();
-                        //
-                        int moneyInput = 0;
-                        boolean loopDone = false;
-                        while (!loopDone) {
-                            try {
-                                moneyInput = Integer.parseInt(moneyInputStr);
-                                loopDone = true;
-                            } catch (Exception e) {
-                                System.out.print("Please enter valid dollar amount >>> ");
-                                moneyInputStr = scanner.nextLine();
+                            String moneyInputStr = scanner.nextLine();
+                            //
+                            int moneyInput = 0;
+                            boolean loopDone = false;
+                            while (!loopDone) {
+                                try {
+                                    moneyInput = Integer.parseInt(moneyInputStr);
+                                    loopDone = true;
+                                } catch (Exception e) {
+                                    System.out.print("Please enter valid dollar amount >>> ");
+                                    moneyInputStr = scanner.nextLine();
+                                }
                             }
-                        }
-                        logger.printToLogFeedMoney(purchaseWorkFlow.getCurrentMoney(),moneyInput);
-                        purchaseWorkFlow.feedMoney(moneyInput);
+                            logger.printToLogFeedMoney(purchaseWorkFlow.getCurrentMoney(), moneyInput);
+                            purchaseWorkFlow.feedMoney(moneyInput);
 
 
+                            System.out.println(" ");
+                            System.out.println("Current Money Provided: " + purchaseWorkFlow.getCurrentMoney());
+                        } else if (choice.equals(PURCHASE_MENU_OPTION_SELECT_PRODUCT)) {
 
-                        System.out.println(" ");
-                        System.out.println("Current Money Provided: " + purchaseWorkFlow.getCurrentMoney());
-                    } else if (choice.equals(PURCHASE_MENU_OPTION_SELECT_PRODUCT)) {
-                        Map<String, String> itemLocation = AttributeFinder.getItemLocationMap();
-                        for (Map.Entry<String, String> item : itemLocation.entrySet()) {
-                            System.out.println(item.getKey() + " - " + item.getValue());
-                        }
-                        // get location input, ensure it's validity
-                        System.out.println(" ");
-                        System.out.print("Enter location >>> ");
-                        String userLocationInput = scanner.nextLine();
-                        String itemSelected = "";
-                            for (Map.Entry<String, String> item : itemLocation.entrySet()) {
-                                if (userLocationInput.contains(item.getKey())) {
-                                    itemSelected += item.getValue();
+                            for (Item item : itemList) {
+                                System.out.println(item.getLocation() + " - " + item.getName());
+                            }
+                            // get location input, ensure it's validity
+                            System.out.println(" ");
+                            System.out.print("Enter location >>> ");
+                            String userLocationInput = scanner.nextLine();
+                            String itemSelected = "";
+                            for (Item item : itemList) {
+                                if (userLocationInput.equalsIgnoreCase(item.getLocation())) {
+                                    itemSelected += item.getName();
                                 }
                             }
                             if (itemSelected.equals("")) {
                                 System.out.println("Selected location not available.");
                                 break;
                             }
-                        System.out.println(" ");
-                        Map<String, Double> itemPrices = AttributeFinder.getItemPrices();
-                        Map<String, String> itemSounds = AttributeFinder.getItemSounds();
-                        int itemQuantity = InventoryInterface.getQuantity(itemSelected);
-                        //
-                        double currentMoney = purchaseWorkFlow.getCurrentMoney();
-                        if (itemQuantity > 0 ) {
-                            if (currentMoney >= itemPrices.get(itemSelected)) {
-                                // dispense
-                                System.out.println(itemSelected + " dispensed. ");
-                                System.out.println("Cost: " + itemPrices.get(itemSelected));
-                                purchaseWorkFlow.purchase(itemPrices.get(itemSelected));
-                                System.out.println("Money Remaining: " + purchaseWorkFlow.getCurrentMoney());
-                                InventoryInterface.dispenseItem(itemSelected, 1);
-                                logger.printToLogItem(itemSelected, userLocationInput , currentMoney, purchaseWorkFlow.getCurrentMoney());
-                                System.out.println(itemSounds.get(itemSelected));
-                            } else {
-                                System.out.println("Insufficient funds.");
+                            System.out.println(" ");
+                           int itemQuantity = 0;
+                           double itemPrice = 0;
+                            for (Item item : itemList) {
+                                if (itemSelected.equals(item.getName())) {
+                                    itemQuantity += item.getQuantity();
+                                    itemPrice += item.getPrice();
+                                }
                             }
-                        } else {
-                            System.out.println("Selected item is sold out.");
-                            break;
-                        }
+                            double currentMoney = purchaseWorkFlow.getCurrentMoney();
+                            if (itemQuantity > 0) {
+                                if (currentMoney >= itemPrice) {
+                                    // dispense
+                                    System.out.println(itemSelected + " dispensed. ");
+                                    System.out.println("Cost: " + itemPrice);
+                                    purchaseWorkFlow.purchase(itemPrice);
+                                    System.out.println("Money Remaining: " + purchaseWorkFlow.getCurrentMoney());
+                                    String sound = "";
+                                    for (Item item : itemList) {
+                                        if (itemSelected.equals(item.getName())) {
+                                            item.dispenseItem();
+                                            sound += item.getSound();
+                                        }
+                                    }
+                                    logger.printToLogItem(itemSelected, userLocationInput, currentMoney, purchaseWorkFlow.getCurrentMoney());
+                                    System.out.println(sound);
+                                } else {
+                                    System.out.println("Insufficient funds.");
+                                }
+                            } else {
+                                System.out.println("Selected item is sold out.");
+                                break;
+                            }
 
 
-                    } else if (choice.equals(PURCHASE_MENU_OPTION_FINISH_TRANSACTION)) {
-                        double moneyToReturn = purchaseWorkFlow.getCurrentMoney();
+                        } else if (choice.equals(PURCHASE_MENU_OPTION_FINISH_TRANSACTION)) {
+                            double moneyToReturn = purchaseWorkFlow.getCurrentMoney();
 //
-                        int numberOfCents = (int) (moneyToReturn * 100);
+                            int numberOfCents = (int) (moneyToReturn * 100);
 
-                        int nickel = 5 ;
-                        int dime = 10;
-                        int quarter = 25;
-                        int nickelQty = 0;
-                        int dimeQty = 0;
-                        int quarterQty = 0;
+                            int nickel = 5;
+                            int dime = 10;
+                            int quarter = 25;
+                            int nickelQty = 0;
+                            int dimeQty = 0;
+                            int quarterQty = 0;
 
-                        while(numberOfCents >= quarter){
-                            quarterQty += 1;
-                            numberOfCents -= quarter;
+                            while (numberOfCents >= quarter) {
+                                quarterQty += 1;
+                                numberOfCents -= quarter;
+                            }
+                            while (numberOfCents >= dime) {
+                                dimeQty += 1;
+                                numberOfCents -= dime;
+                            }
+                            while (numberOfCents >= nickel) {
+                                nickelQty += 1;
+                                numberOfCents -= nickel;
+                            }
+                            logger.printToLogChange(moneyToReturn, numberOfCents);
+                            moneyToReturn = (double) numberOfCents / 100;
+                            purchaseWorkFlow.setCurrentMoney(moneyToReturn);
+                            System.out.println("Change Returned");
+                            System.out.println("Quarters Returned: " + quarterQty);
+                            System.out.println("Dimes Returned: " + dimeQty);
+                            System.out.println("Nickels Returned: " + nickelQty);
+
+
                         }
-                        while(numberOfCents >= dime){
-                            dimeQty += 1;
-                            numberOfCents -= dime;
-                        }
-                        while (numberOfCents >= nickel){
-                            nickelQty += 1;
-                            numberOfCents -= nickel;
-                        }
-                        logger.printToLogChange(moneyToReturn, numberOfCents);
-                        moneyToReturn = (double)numberOfCents  / 100;
-                        purchaseWorkFlow.setCurrentMoney(moneyToReturn);
-                        System.out.println("Change Returned");
-                        System.out.println("Quarters Returned: " + quarterQty);
-                        System.out.println("Dimes Returned: "+ dimeQty);
-                        System.out.println("Nickels Returned: "+ nickelQty);
-
-
-
-
                     }
+
+                } else if (choice.equals(MAIN_MENU_OPTION_EXIT)) {
+                    exit(0);
                 }
-
-            } else if (choice.equals(MAIN_MENU_OPTION_EXIT)) {
-                exit(0);
             }
+        } catch (FileNotFoundException e) {
+            System.out.println("File was not found.");
         }
-
     }
 
 
-    public static void main(String[] args) throws FileNotFoundException {
-        FileSplitter fileSplitter = new FileSplitter();
-        fileSplitter.splitFile("C:\\Users\\Student\\workspace\\capstone-1-team-6\\capstone\\vendingmachine.csv");
+    public static void main(String[] args) {
+
 
         Menu menu = new Menu(System.in, System.out);
         VendingMachineCLI cli = new VendingMachineCLI(menu);
