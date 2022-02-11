@@ -26,10 +26,9 @@ public class Logger {
 
     public String dateTime() {
 
-        LocalDate date = LocalDate.now();
-        String dates = date.toString();
-        return dates;
-
+         String date = LocalDate.now().format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+        String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+        return date + " " + time;
 
     }
 
