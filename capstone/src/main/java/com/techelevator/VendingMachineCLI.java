@@ -3,6 +3,7 @@ package com.techelevator;
 import com.techelevator.view.Menu;
 
 import java.awt.geom.Arc2D;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 import static java.lang.System.exit;
@@ -25,7 +26,8 @@ public class VendingMachineCLI {
         this.menu = menu;
     }
 
-    public void run() {
+    public void run() throws FileNotFoundException {
+        Logger logger = new Logger();
 
 
         while (true) {
@@ -54,6 +56,7 @@ public class VendingMachineCLI {
                         System.out.print("Enter dollar amount to insert >>> ");
 
                         String moneyInputStr = scanner.nextLine();
+                        //
                         int moneyInput = 0;
                         boolean loopDone = false;
                         while (!loopDone) {
@@ -65,7 +68,11 @@ public class VendingMachineCLI {
                                 moneyInputStr = scanner.nextLine();
                             }
                         }
+                        logger.printToLogFeedMoney(purchaseWorkFlow.getCurrentMoney(),moneyInput);
                         purchaseWorkFlow.feedMoney(moneyInput);
+
+
+
                         System.out.println(" ");
                         System.out.println("Current Money Provided: " + purchaseWorkFlow.getCurrentMoney());
                     } else if (choice.equals(PURCHASE_MENU_OPTION_SELECT_PRODUCT)) {
@@ -91,6 +98,7 @@ public class VendingMachineCLI {
                         Map<String, Double> itemPrices = AttributeFinder.getItemPrices();
                         Map<String, String> itemSounds = AttributeFinder.getItemSounds();
                         int itemQuantity = InventoryInterface.getQuantity(itemSelected);
+                        //
                         double currentMoney = purchaseWorkFlow.getCurrentMoney();
                         if (itemQuantity > 0 ) {
                             if (currentMoney >= itemPrices.get(itemSelected)) {
@@ -100,6 +108,7 @@ public class VendingMachineCLI {
                                 purchaseWorkFlow.purchase(itemPrices.get(itemSelected));
                                 System.out.println("Money Remaining: " + purchaseWorkFlow.getCurrentMoney());
                                 InventoryInterface.dispenseItem(itemSelected, 1);
+                                logger.printToLogItem(itemSelected, userLocationInput , currentMoney, purchaseWorkFlow.getCurrentMoney());
                                 System.out.println(itemSounds.get(itemSelected));
                             } else {
                                 System.out.println("Insufficient funds.");
@@ -112,7 +121,7 @@ public class VendingMachineCLI {
 
                     } else if (choice.equals(PURCHASE_MENU_OPTION_FINISH_TRANSACTION)) {
                         double moneyToReturn = purchaseWorkFlow.getCurrentMoney();
-
+//
                         int numberOfCents = (int) (moneyToReturn * 100);
 
                         int nickel = 5 ;
@@ -134,6 +143,7 @@ public class VendingMachineCLI {
                             nickelQty += 1;
                             numberOfCents -= nickel;
                         }
+                        logger.printToLogChange(moneyToReturn, numberOfCents);
                         moneyToReturn = (double)numberOfCents  / 100;
                         purchaseWorkFlow.setCurrentMoney(moneyToReturn);
                         System.out.println("Change Returned");
@@ -151,18 +161,13 @@ public class VendingMachineCLI {
                 exit(0);
             }
         }
+
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
         FileSplitter fileSplitter = new FileSplitter();
         fileSplitter.splitFile("C:\\Users\\Student\\workspace\\capstone-1-team-6\\capstone\\vendingmachine.csv");
-
-        PurchaseMenu purchaseMenu = new PurchaseMenu(System.in, System.out);
-
-
-
-
 
         Menu menu = new Menu(System.in, System.out);
         VendingMachineCLI cli = new VendingMachineCLI(menu);
