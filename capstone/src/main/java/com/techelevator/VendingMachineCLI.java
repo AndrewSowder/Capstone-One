@@ -99,6 +99,7 @@ public class VendingMachineCLI {
                                 System.out.println("Cost: " + itemPrices.get(itemSelected));
                                 purchaseWorkFlow.purchase(itemPrices.get(itemSelected));
                                 System.out.println("Money Remaining: " + purchaseWorkFlow.getCurrentMoney());
+                                InventoryInterface.dispenseItem(itemSelected, 1);
                                 System.out.println(itemSounds.get(itemSelected));
                             } else {
                                 System.out.println("Insufficient funds.");
@@ -107,9 +108,6 @@ public class VendingMachineCLI {
                             System.out.println("Selected item is sold out.");
                             break;
                         }
-
-
-
 
 
                     } else if (choice.equals(PURCHASE_MENU_OPTION_FINISH_TRANSACTION)) {
