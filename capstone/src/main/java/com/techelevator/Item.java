@@ -23,11 +23,15 @@ public class Item implements SoundInterface{
     public int getQuantity() {
         return quantity;
     }
-
-    public void dispenseItem() {
-        quantity -= 1;
+    public void setQuantiy(int quantity) {
+        this.quantity = quantity;
     }
 
+    public void dispenseItem() {
+        if (quantity >= 1) {
+            quantity -= 1;
+        }
+    }
     public String getLocation() {
         return location;
     }

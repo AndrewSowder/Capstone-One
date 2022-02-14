@@ -11,23 +11,6 @@ public class FileSplitter {
         itemList = new ArrayList<>();
     }
 
-   /* public void splitFile(String filePath){
-        File file = new File(filePath);
-
-        try (Scanner fileScan = new Scanner(file)) {
-            while (fileScan.hasNextLine()) {
-                String line = fileScan.nextLine();
-                String[] lineSplit = splitLine(line);
-                list.add(lineSplit);
-                AttributeFinder attributeFinder = new AttributeFinder(lineSplit);
-                InventoryInterface.stock(attributeFinder.getName());
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("File path not valid." + e);
-            System.exit(0);
-        }
-
-    } */
 
     public void splitFile() {
 

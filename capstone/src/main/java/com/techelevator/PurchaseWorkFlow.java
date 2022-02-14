@@ -60,6 +60,10 @@ public class PurchaseWorkFlow  {
     public int getNumberOfCents() {
         return numberOfCents;
     }
+    public void setNumberOfCents(int cents){
+        numberOfCents = cents;
+    }
+
 
     public double getCurrentMoney() {
         return currentMoney;
