@@ -4,6 +4,7 @@ import com.techelevator.view.Menu;
 
 import java.awt.geom.Arc2D;
 import java.io.FileNotFoundException;
+import java.text.DecimalFormat;
 import java.util.*;
 
 import static java.lang.System.exit;
@@ -25,6 +26,8 @@ public class VendingMachineCLI {
     public VendingMachineCLI(Menu menu) {
         this.menu = menu;
     }
+
+    private DecimalFormat formatter = new DecimalFormat("#0.00");
 
     public void run() {
         FileSplitter fileSplitter = new FileSplitter();
@@ -55,21 +58,23 @@ public class VendingMachineCLI {
                             //
                             int moneyInput = 0;
                             boolean loopDone = false;
-                            while (!loopDone) {
-                                try {
-                                    moneyInput = Integer.parseInt(moneyInputStr);
-                                    loopDone = true;
-                                } catch (Exception e) {
-                                    System.out.print("Please enter valid dollar amount >>> ");
-                                    moneyInputStr = scanner.nextLine();
+                                while (!loopDone) {
+                                    try {
+                                        moneyInput = Integer.parseInt(moneyInputStr);
+                                        if (moneyInput > 0) {
+                                            loopDone = true;
+                                        } else {
+                                            throw new Exception();
+                                        }
+                                    } catch (Exception e) {
+                                        System.out.print("Please enter valid dollar amount >>> ");
+                                        moneyInputStr = scanner.nextLine();
+                                    }
                                 }
-                            }
                             logger.printToLogFeedMoney(purchaseWorkFlow.getCurrentMoney(), moneyInput);
                             purchaseWorkFlow.feedMoney(moneyInput);
-
-
                             System.out.println(" ");
-                            System.out.println("Current Money Provided: " + purchaseWorkFlow.getCurrentMoney());
+                            System.out.println("Current Money Provided: " + formatter.format(purchaseWorkFlow.getCurrentMoney()));
                         } else if (choice.equals(PURCHASE_MENU_OPTION_SELECT_PRODUCT)) {
 
                             for (Item item : itemList) {
@@ -103,9 +108,9 @@ public class VendingMachineCLI {
                                 if (currentMoney >= itemPrice) {
                                     // dispense
                                     System.out.println(itemSelected + " dispensed. ");
-                                    System.out.println("Cost: " + itemPrice);
+                                    System.out.println("Cost: " + formatter.format(itemPrice));
                                     purchaseWorkFlow.purchase(itemPrice);
-                                    System.out.println("Money Remaining: " + purchaseWorkFlow.getCurrentMoney());
+                                    System.out.println("Money Remaining: " + formatter.format(purchaseWorkFlow.getCurrentMoney()));
                                     String sound = "";
                                     for (Item item : itemList) {
                                         if (itemSelected.equals(item.getName())) {
@@ -126,28 +131,12 @@ public class VendingMachineCLI {
 
                         } else if (choice.equals(PURCHASE_MENU_OPTION_FINISH_TRANSACTION)) {
                             double moneyToReturn = purchaseWorkFlow.getCurrentMoney();
-//
                             int numberOfCents = (int) (moneyToReturn * 100);
+                            int quarterQty = purchaseWorkFlow.quartersToReturn(numberOfCents);
+                            int dimeQty = purchaseWorkFlow.dimesToReturn();
+                            int nickelQty = purchaseWorkFlow.nickelsToReturn();
+                            numberOfCents = purchaseWorkFlow.getNumberOfCents();
 
-                            int nickel = 5;
-                            int dime = 10;
-                            int quarter = 25;
-                            int nickelQty = 0;
-                            int dimeQty = 0;
-                            int quarterQty = 0;
-
-                            while (numberOfCents >= quarter) {
-                                quarterQty += 1;
-                                numberOfCents -= quarter;
-                            }
-                            while (numberOfCents >= dime) {
-                                dimeQty += 1;
-                                numberOfCents -= dime;
-                            }
-                            while (numberOfCents >= nickel) {
-                                nickelQty += 1;
-                                numberOfCents -= nickel;
-                            }
                             logger.printToLogChange(moneyToReturn, numberOfCents);
                             moneyToReturn = (double) numberOfCents / 100;
                             purchaseWorkFlow.setCurrentMoney(moneyToReturn);
