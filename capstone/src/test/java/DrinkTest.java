@@ -15,6 +15,6 @@ public class DrinkTest {
 
         String expected = "Glug Glug, Yum!" ;
 
-        Assert.assertEquals(expected,drink.getSound());
+        Assert.assertEquals("Drink item does not return correct sound",expected,drink.getSound());
     }
 }

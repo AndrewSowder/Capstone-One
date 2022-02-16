@@ -14,6 +14,6 @@ public class CandyTest {
 
         String expected =  "Munch Munch, Yum!";
 
-        Assert.assertEquals(expected,candy.getSound());
+        Assert.assertEquals("Candy item does not return correct sound",expected,candy.getSound());
     }
 }

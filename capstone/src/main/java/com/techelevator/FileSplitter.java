@@ -54,7 +54,7 @@ public class FileSplitter {
         return itemList;
     }
 
-    private String[] splitLine(String line) {
+    public String[] splitLine(String line) {
         return line.split("\\|");
     }
 

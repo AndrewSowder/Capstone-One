@@ -13,6 +13,6 @@ public class GumTest {
 
         String expected = "Chew Chew, Yum!";
 
-        Assert.assertEquals(expected,gum.getSound());
+        Assert.assertEquals("Gum item does not return correct sound",expected,gum.getSound());
     }
 }

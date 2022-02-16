@@ -14,7 +14,7 @@ public class ChipTest {
 
         String expected = "Crunch Crunch, Yum!";
 
-        Assert.assertEquals(expected,chip.getSound());
+        Assert.assertEquals("Chip item does not return correct sound",expected,chip.getSound());
     }
 }
 
